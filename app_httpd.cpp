@@ -215,12 +215,6 @@ static size_t jpg_encode_stream(void * arg, size_t index, const void* data, size
     return len;
 }
 
-
-static esp_err_t reset_handler(httpd_req_t *req){
-  Serial.println("Yesss");
-  ESP.restart();
-}
-
 static esp_err_t capture_handler(httpd_req_t *req){
     camera_fb_t * fb = NULL;
     esp_err_t res = ESP_OK;
@@ -514,7 +508,7 @@ static esp_err_t cmd_handler(httpd_req_t *req){
     else if(!strcmp(variable, "wpc")) res = s->set_wpc(s, val);
     else if(!strcmp(variable, "raw_gma")) res = s->set_raw_gma(s, val);
     else if(!strcmp(variable, "lenc")) res = s->set_lenc(s, val);
-    else if(!strcmp(variable, "special_effect")) res = s->set_special_effect(s, val);
+//    else if(!strcmp(variable, "special_effect")) res = s->set_special_effect(s, val);
     else if(!strcmp(variable, "wb_mode")) res = s->set_wb_mode(s, val);
     else if(!strcmp(variable, "ae_level")) res = s->set_ae_level(s, val);
     else if(!strcmp(variable, "face_detect")) {
@@ -594,6 +588,13 @@ static esp_err_t index_handler(httpd_req_t *req){
     return httpd_resp_send(req, (const char *)index_ov2640_html_gz, index_ov2640_html_gz_len);
 }
 
+static esp_err_t reset_handler(httpd_req_t *req) {
+  Serial.println("Yesss");
+  delay(2000);
+  ESP.restart();
+  return NULL;
+}
+
 void startCameraServer(){
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
 
@@ -661,10 +662,10 @@ void startCameraServer(){
     Serial.printf("Starting web server on port: '%d'\n", config.server_port);
     if (httpd_start(&camera_httpd, &config) == ESP_OK) {
         httpd_register_uri_handler(camera_httpd, &index_uri);
+        httpd_register_uri_handler(camera_httpd, &reset_uri);
         httpd_register_uri_handler(camera_httpd, &cmd_uri);
         httpd_register_uri_handler(camera_httpd, &status_uri);
         httpd_register_uri_handler(camera_httpd, &capture_uri);
-        httpd_register_uri_handler(camera_httpd, &reset_uri);
     }
 
     config.server_port += 1;
