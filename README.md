@@ -19,3 +19,6 @@ Now I will deactivate the hotspot.
 The ESP32 is going to take a picture with the flash ON and then go to sleep for a minute. Modify this parameter if you want to take less or more frequent pictures.
 
   
+## Storage
+
+I am using the onboard SD card reader that comes with the ESP32-cam. 
